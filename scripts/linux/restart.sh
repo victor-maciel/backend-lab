@@ -1,18 +1,13 @@
 #!/bin/bash
 
-set -e
+###############################################################
+# Backend Lab
+#
+# Reinicia o ambiente
+###############################################################
 
-echo "========================================="
-echo " Backend Lab"
-echo "Reiniciando ambiente..."
-echo "========================================="
+./scripts/linux/stop.sh
 
-docker compose down
+echo ""
 
-docker compose up -d
-
-echo
-echo "Ambiente reiniciado."
-echo
-
-docker compose ps
+./scripts/linux/start.sh

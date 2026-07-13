@@ -1,13 +1,22 @@
 #!/bin/bash
 
-set -e
+###############################################################
+# Backend Lab
+#
+# Finaliza o ambiente
+###############################################################
 
+echo ""
 echo "========================================="
-echo " Backend Lab"
-echo "Parando ambiente..."
+echo " Parando Backend Lab"
 echo "========================================="
 
 docker compose down
 
-echo
-echo "Ambiente parado."
+echo ""
+
+echo "Containers finalizados."
+
+echo "Volumes preservados."
+
+echo "Network preservada."
