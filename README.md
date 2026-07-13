@@ -1,127 +1,193 @@
 # Backend Lab
 
-Laboratório completo para desenvolvimento Backend utilizando Docker.
+> Ambiente completo de desenvolvimento para aplicações Backend Java utilizando Docker.
 
-O objetivo deste projeto é disponibilizar um ambiente reutilizável para desenvolvimento de aplicações Java/Spring Boot, evitando a necessidade de configurar bancos de dados, mensageria e ferramentas de apoio a cada novo projeto.
+O **Backend Lab** tem como objetivo fornecer uma infraestrutura reutilizável para o desenvolvimento de aplicações Java, eliminando a necessidade de configurar manualmente bancos de dados, mensageria e ferramentas administrativas a cada novo projeto.
 
-
----
-
-## Objetivos
-
-- Aprender Docker de forma prática
-- Aprender Apache Kafka
-- Utilizar PostgreSQL como banco principal
-- Utilizar Redis para cache
-- Disponibilizar um ambiente reutilizável para qualquer projeto backend
-- Evoluir continuamente através de Sprints
+Todo o ambiente é executado utilizando **Docker Compose**, permitindo que qualquer projeto compartilhe a mesma infraestrutura.
 
 ---
 
-## Tecnologias
+# Objetivos
 
-- Docker
-- Docker Compose
-- PostgreSQL 17
-- Apache Kafka 4 (KRaft)
-- Kafka UI
-- pgAdmin 4
-- Redis
-- Portainer
+- Aprender Docker na prática.
+- Aprender Apache Kafka.
+- Padronizar ambientes de desenvolvimento.
+- Possuir uma infraestrutura reutilizável.
+- Documentar todo o processo de instalação.
+- Utilizar boas práticas de infraestrutura.
 
 ---
 
-## Estrutura
+# Tecnologias
 
-backend-lab/
+| Tecnologia | Versão |
+|------------|---------|
+| PostgreSQL | 17 |
+| Apache Kafka | 4.x (KRaft) |
+| Kafbat UI | Latest |
+| Redis | 7.4 |
+| pgAdmin | 9.x |
+| Docker | Engine |
+| Docker Compose | V2 |
 
+---
+
+# Arquitetura
+
+```
+                +----------------------+
+                |   Aplicações Java    |
+                +----------+-----------+
+                           |
+         ----------------------------------------
+         |             Docker Network           |
+         ----------------------------------------
+            |        |        |        |
+      PostgreSQL   Kafka    Redis   pgAdmin
+                     |
+                 Kafbat UI
+```
+
+Todos os serviços comunicam-se através da rede Docker **backend-network**.
+
+---
+
+# Estrutura do Projeto
+
+```
+backend-lab
+│
+├── docs/
+│   ├── docker.md
+│   ├── linux-server.md
+│   └── server-setup.md
+│
+├── scripts/
+│   ├── linux/
+│   └── windows/
+│
+├── .env.example
 ├── docker-compose.yml
-
-├── .env
-
-├── docs
-
-├── postgres
-
-├── kafka
-
-├── redis
-
-└── scripts
-
----
-
-## Arquitetura
-
-Spring Boot
-
-├── PostgreSQL
-
-├── Redis
-
-└── Kafka
-
-└── Kafka UI
-
----
-
-## Como iniciar
-
-```bash
-docker compose up -d
+├── Makefile
+└── README.md
 ```
 
 ---
 
-## Como parar
+# Pré-requisitos
+
+- Git
+- Docker Engine
+- Docker Compose V2
+- Make (Linux)
+
+---
+
+# Instalação
+
+Clone o projeto.
 
 ```bash
-docker compose down
+git clone https://github.com/victor-maciel/backend-lab.git
+```
+
+Entre na pasta.
+
+```bash
+cd backend-lab
+```
+
+Crie o arquivo `.env`.
+
+```bash
+cp .env.example .env
+```
+
+Configure as variáveis do ambiente.
+
+---
+
+# Inicializando
+
+```bash
+make start
+```
+
+ou
+
+```bash
+./scripts/linux/start.sh
 ```
 
 ---
 
-## Atualizar imagens
+# Validando
 
 ```bash
-docker compose pull
-docker compose up -d
+make health
 ```
 
 ---
 
-## Roadmap
+# Parando
 
-### Sprint 1
+```bash
+make stop
+```
 
+---
+
+# Atualizando
+
+```bash
+make update
+```
+
+---
+
+# Documentação
+
+Toda a documentação encontra-se na pasta **docs**.
+
+- docker.md
+- server-setup.md
+- linux-server.md
+
+---
+
+# Roadmap
+
+## Sprint 1
+
+- Infraestrutura Docker
 - PostgreSQL
-- Kafka
 - Redis
-- Kafka UI
+- Kafka
+- Kafbat
 - pgAdmin
 
-### Sprint 2
+## Sprint 2
 
-- Mailpit
-- MinIO
-- Keycloak
+- API Pedidos
+- API Estoque
+- Kafka Producer
+- Kafka Consumer
 
-### Sprint 3
+## Sprint 3
 
+- Observabilidade
 - Prometheus
 - Grafana
-- Loki
 
-### Sprint 4
+## Sprint 4
 
-- SonarQube
-- Jenkins
+- Deploy
+- CI/CD
+- GitHub Actions
 
 ---
 
-## Licença
+# Licença
 
-Projeto destinado para estudos e desenvolvimento backend.
-
-## Obervações
-Esse .md foi formatado com ajuda de IA
+MIT

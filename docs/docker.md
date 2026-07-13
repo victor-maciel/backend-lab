@@ -1,126 +1,234 @@
 # Docker
 
-## Subir o ambiente
+Este documento descreve toda a infraestrutura Docker utilizada pelo Backend Lab.
+
+---
+
+# Serviços
+
+## PostgreSQL
+
+Banco de dados principal utilizado pelas aplicações Java.
+
+Porta:
+
+```
+5432
+```
+
+Container:
+
+```
+backend-postgres
+```
+
+Volume:
+
+```
+backend-lab_postgres_data
+```
+
+---
+
+## Redis
+
+Utilizado para cache, sessões e filas.
+
+Porta:
+
+```
+6379
+```
+
+Container:
+
+```
+backend-redis
+```
+
+---
+
+## Apache Kafka
+
+Broker responsável pela mensageria.
+
+Modo:
+
+```
+KRaft
+```
+
+Sem ZooKeeper.
+
+Porta:
+
+```
+9092
+```
+
+Container:
+
+```
+backend-kafka
+```
+
+---
+
+## Kafbat
+
+Interface Web para gerenciamento do Kafka.
+
+Porta:
+
+```
+8080
+```
+
+Container:
+
+```
+backend-kafbat
+```
+
+---
+
+## pgAdmin
+
+Administração do PostgreSQL.
+
+Porta:
+
+```
+5050
+```
+
+Container:
+
+```
+backend-pgadmin
+```
+
+---
+
+# Volumes
+
+| Volume | Descrição |
+|---------|-----------|
+| postgres_data | Dados PostgreSQL |
+| redis_data | Persistência Redis |
+| kafka_data | Dados Kafka |
+| pgadmin_data | Configuração pgAdmin |
+
+---
+
+# Network
+
+Todos os serviços utilizam:
+
+```
+backend-network
+```
+
+---
+
+# Variáveis de Ambiente
+
+Todas as configurações encontram-se no arquivo `.env`.
+
+Exemplo:
+
+```
+POSTGRES_DB=pedidos
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+
+HOST_IP=192.168.18.46
+```
+
+---
+
+# Comandos úteis
+
+Validar compose
+
+```bash
+docker compose config
+```
+
+Subir ambiente
 
 ```bash
 docker compose up -d
 ```
 
----
-
-## Parar o ambiente
+Parar ambiente
 
 ```bash
 docker compose down
 ```
 
----
-
-## Reiniciar
+Ver containers
 
 ```bash
-docker compose restart
+docker compose ps
+```
+
+Health Check
+
+```bash
+make health
 ```
 
 ---
 
-## Verificar containers
+# Troubleshooting
+
+## Porta ocupada
+
+```
+Bind for 9092 failed
+```
+
+Identifique o processo.
 
 ```bash
 docker ps
 ```
 
----
-
-## Ver logs
-
-```bash
-docker compose logs -f
-```
-
-Logs de um serviço específico:
-
-```bash
-docker compose logs postgres
-docker compose logs kafka
-docker compose logs redis
-```
+Pare o container conflitante.
 
 ---
 
-## Atualizar imagens
+## Variáveis não encontradas
+
+```
+POSTGRES_USER variable is not set
+```
+
+Crie o arquivo `.env`.
 
 ```bash
-docker compose pull
-docker compose up -d
+cp .env.example .env
 ```
 
 ---
 
-## Remover containers
+## Kafka não inicia
+
+Verifique os logs.
 
 ```bash
-docker compose down
+make logs
 ```
+
+Selecione Kafka.
 
 ---
 
-## Remover containers e volumes
+## pgAdmin não inicia
+
+Verifique permissões do volume.
 
 ```bash
-docker compose down -v
-```
-
----
-
-## Remover imagens
-
-```bash
-docker image prune
-```
-
----
-
-## Limpar tudo
-
-```bash
-docker system prune -a
-```
-
----
-
-## Acessar um container
-
-```bash
-docker exec -it postgres17 bash
-```
-
-ou
-
-```bash
-docker exec -it kafka bash
-```
-
----
-
-## Status
-
-```bash
-docker ps
-```
-
----
-
-## Inspecionar volumes
-
-```bash
-docker volume ls
-```
-
----
-
-## Inspecionar redes
-
-```bash
-docker network ls
+docker volume inspect
 ```
