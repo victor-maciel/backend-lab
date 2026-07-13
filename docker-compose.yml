@@ -1,234 +1,208 @@
 ###############################################################
-#
 # Backend Lab
 #
-# Sprint 1
+# Ambiente de desenvolvimento para aplicações Backend Java.
 #
-# Ambiente de desenvolvimento Backend
-#
-# Tecnologias:
+# Serviços:
 # - PostgreSQL 17
-# - Apache Kafka 4 (KRaft)
-# - Kafka UI
 # - Redis
+# - Apache Kafka 4 (KRaft)
+# - Kafbat UI
 # - pgAdmin
 #
+# Autor: Victor M.
+# github: https://github.com/victor-maciel/backend-lab
 ###############################################################
 
 name: backend-lab
 
 services:
 
-  ###############################################################
+  #############################################################
   # PostgreSQL
-  ###############################################################
-
+  #############################################################
   postgres:
 
     image: postgres:17
-
     container_name: backend-postgres
 
     restart: unless-stopped
 
-    environment:
-
-      POSTGRES_DB: ${POSTGRES_DB}
-
-      POSTGRES_USER: ${POSTGRES_USER}
-
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-
     ports:
-
       - "${POSTGRES_PORT}:5432"
 
-    volumes:
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
+    volumes:
       - postgres_data:/var/lib/postgresql/data
 
-    networks:
-
-      - backend-network
-
     healthcheck:
-
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-
       interval: 10s
-
       timeout: 5s
-
       retries: 5
 
-  ###############################################################
-  # pgAdmin
-  ###############################################################
-
-  pgadmin:
-
-    image: dpage/pgadmin4:9.6
-
-    container_name: backend-pgadmin
-
-    restart: unless-stopped
-
-    environment:
-
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
-
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
-
-    ports:
-
-      - "${PGADMIN_PORT}:80"
-
-    volumes:
-
-      - pgadmin_data:/var/lib/pgadmin
-
-    depends_on:
-
-      postgres:
-
-        condition: service_healthy
-
     networks:
-
       - backend-network
 
-  ###############################################################
+  #############################################################
   # Redis
-  ###############################################################
-
+  #############################################################
   redis:
 
     image: redis:7.4
-
     container_name: backend-redis
 
     restart: unless-stopped
 
     command:
-
       - redis-server
-
       - --appendonly
-
       - "yes"
 
     ports:
-
       - "${REDIS_PORT}:6379"
 
     volumes:
-
       - redis_data:/data
 
-    networks:
-
-      - backend-network
-
     healthcheck:
-
       test: ["CMD", "redis-cli", "ping"]
-
       interval: 10s
-
       timeout: 5s
-
       retries: 5
 
-  ###############################################################
-  # Apache Kafka (KRaft)
-  ###############################################################
+    networks:
+      - backend-network
 
+  #############################################################
+  # Apache Kafka 4 (KRaft)
+  #############################################################
   kafka:
 
     image: apache/kafka:4.0.0
-
     container_name: backend-kafka
 
     restart: unless-stopped
 
     ports:
-
       - "${KAFKA_PORT}:9092"
 
     environment:
 
+      #########################################################
+      # Identificação do broker
+      #########################################################
+
       KAFKA_NODE_ID: 1
 
+      #########################################################
+      # KRaft
+      #########################################################
+
       KAFKA_PROCESS_ROLES: broker,controller
-
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${HOST_IP}:${KAFKA_PORT}
-
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@backend-kafka:9093
 
+      #########################################################
+      # Listeners
+      #########################################################
+
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${HOST_IP}:${KAFKA_PORT}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+
+      #########################################################
+      # Tópicos internos
+      #########################################################
+
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+      #########################################################
+      # Dados
+      #########################################################
 
       KAFKA_LOG_DIRS: /var/lib/kafka/data
 
     volumes:
-
       - kafka_data:/var/lib/kafka/data
 
-    networks:
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
 
+    networks:
       - backend-network
 
-  ###############################################################
-  # Kafka UI
-  ###############################################################
-
-  kafka-ui:
+  #############################################################
+  # Kafbat UI
+  #############################################################
+  kafbat:
 
     image: ghcr.io/kafbat/kafka-ui:latest
-
     container_name: backend-kafbat
 
     restart: unless-stopped
 
-    ports:
+    depends_on:
+      kafka:
+        condition: service_healthy
 
+    ports:
       - "${KAFKA_UI_PORT}:8080"
 
     environment:
 
-      KAFKA_CLUSTERS_0_NAME: Backend Lab
+      DYNAMIC_CONFIG_ENABLED: "true"
 
+      KAFKA_CLUSTERS_0_NAME: Backend Lab
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: backend-kafka:9092
 
+    networks:
+      - backend-network
+
+  #############################################################
+  # pgAdmin
+  #############################################################
+  pgadmin:
+
+    image: dpage/pgadmin4:9.6
+    container_name: backend-pgadmin
+
+    restart: unless-stopped
+
     depends_on:
+      postgres:
+        condition: service_healthy
 
-      kafka:
+    ports:
+      - "${PGADMIN_PORT}:80"
 
-        condition: service_started
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
 
     networks:
-
       - backend-network
 
 ###############################################################
-# Networks
+# Network
 ###############################################################
 
 networks:
 
   backend-network:
-
     name: ${DOCKER_NETWORK}
-
     driver: bridge
 
 ###############################################################
@@ -238,9 +212,13 @@ networks:
 volumes:
 
   postgres_data:
-
-  pgadmin_data:
+    name: backend-lab_postgres_data
 
   redis_data:
+    name: backend-lab_redis_data
 
   kafka_data:
+    name: backend-lab_kafka_data
+
+  pgadmin_data:
+    name: backend-lab_pgadmin_data
