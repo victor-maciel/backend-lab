@@ -21,15 +21,16 @@ Todo o ambiente é executado utilizando **Docker Compose**, permitindo que qualq
 
 # Tecnologias
 
-| Tecnologia | Versão |
-|------------|---------|
-| PostgreSQL | 17 |
-| Apache Kafka | 4.x (KRaft) |
-| Kafbat UI | Latest |
-| Redis | 7.4 |
-| pgAdmin | 9.x |
-| Docker | Engine |
-| Docker Compose | V2 |
+| Tecnologia       | Versão      |
+|------------------|-------------|
+| PostgreSQL       | 17          |
+| Apache Kafka     | 4.x (KRaft) |
+| Kafbat UI        | Latest      |
+| Redis            | 7.4         |
+| pgAdmin          | 9.x         |
+| Docker           | Engine      |
+| Docker Compose   | V2          |
+| Dockhand | Latest     |
 
 ---
 
@@ -60,7 +61,7 @@ backend-lab
 │
 ├── docs/
 │   ├── docker.md
-│   ├── linux-server.md
+│   ├── roadmap.md
 │   └── server-setup.md
 │
 ├── scripts/

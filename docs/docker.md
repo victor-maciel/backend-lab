@@ -108,6 +108,22 @@ Container:
 backend-pgadmin
 ```
 
+## Dockhand
+
+Interface Web para gerenciamento do Docker.
+
+Container:
+```
+backend-dockhand
+```
+Porta:
+```
+3000
+```
+Acesso:
+```
+http://IP_DO_SERVIDOR:3000
+```
 ---
 
 # Volumes

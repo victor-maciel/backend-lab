@@ -9,6 +9,7 @@
 # - Apache Kafka 4 (KRaft)
 # - Kafbat UI
 # - pgAdmin
+# - Dockhand
 #
 # Autor: Victor M.
 # github: https://github.com/victor-maciel/backend-lab
@@ -195,6 +196,28 @@ services:
     networks:
       - backend-network
 
+  #############################################################
+  # dockhand
+  #############################################################
+  dockhand:
+
+    image: fnsys/dockhand:latest
+
+    container_name: backend-dockhand
+
+    restart: unless-stopped
+
+    ports:
+      - "${DOCKHAND_PORT}:3000"
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - dockhand_data:/app/data
+
+    networks:
+      - backend-network
+
+
 ###############################################################
 # Network
 ###############################################################
@@ -222,3 +245,6 @@ volumes:
 
   pgadmin_data:
     name: backend-lab_pgadmin_data
+
+  dockhand_data:
+    name: backend-lab_dockhand_data

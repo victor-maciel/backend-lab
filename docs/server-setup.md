@@ -26,6 +26,14 @@ sudo apt upgrade -y
 ```bash
 sudo apt install git -y
 ```
+
+# Instalação do Make
+
+```bash
+sudo apt install make
+```
+
+
 ---
 # Configurando o acesso SSH
 
@@ -306,7 +314,7 @@ docker-compose-plugin
 sudo usermod -aG docker $USER
 ```
 
-Reinicie a sessão.
+Faça logout e login novamente (ou reinicie a sessão SSH).
 
 ---
 
@@ -320,6 +328,13 @@ git clone <repositorio>
 
 # Configurar
 
+Entrar na pasta
+
+```bash
+cd backend-lab/
+```
+Fazer a copia do arquivo .env exemplo e criando uma .env
+
 ```bash
 cp .env.example .env
 ```
@@ -331,6 +346,16 @@ nano .env
 ```
 
 ---
+
+# Permitir a execução dos scripts
+
+```bash
+find scripts -type f -name "*.sh" -exec chmod +x {} \;
+```
+
+---
+
+
 
 # Iniciar
 
@@ -388,10 +413,11 @@ Nunca remova os volumes sem possuir backup.
 
 ---
 
-# Checklist Final
+## Checklist Final
 
 - Docker instalado
 - Docker Compose instalado
+- Dockhand instalado
 - Git instalado
 - SSH funcionando
 - Projeto clonado

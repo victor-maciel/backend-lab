@@ -6,8 +6,9 @@
 - PostgreSQL
 - Kafka
 - Redis
-- Kafka UI
+- Kafbat UI
 - pgAdmin
+- Dockhand
 
 ### Sprint 2
 
