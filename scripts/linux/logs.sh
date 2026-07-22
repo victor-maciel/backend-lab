@@ -49,6 +49,9 @@ docker compose logs -f pgadmin
 docker compose logs -f
 ;;
 
+7)
+docker compose logs  dockhand -f
+;;
 *)
 echo "Opção inválida."
 ;;
